@@ -13,6 +13,8 @@ export default function LookerExportPage() {
 
   // Form state
   const [selectedView, setSelectedView] = useState(views[0].value);
+  const [manualView, setManualView] = useState('');
+  const [useManualView, setUseManualView] = useState(false);
   const [limit, setLimit] = useState(200);
   const [noLimit, setNoLimit] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -47,7 +49,7 @@ export default function LookerExportPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          explore: selectedView,
+          explore: useManualView ? manualView : selectedView,
           limit: limit,
           noLimit: noLimit,
           startDate: startDate,
@@ -92,19 +94,47 @@ export default function LookerExportPage() {
               <label htmlFor="view" className="block text-sm font-medium text-gray-900 mb-1">
                 Select View
               </label>
-              <select
-                id="view"
-                name="view"
-                value={selectedView}
-                onChange={(e) => setSelectedView(e.target.value)}
-                className="mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm bg-white text-gray-900"
-              >
-                {views.map((view) => (
-                  <option key={view.value} value={view.value} className="text-gray-900">
-                    {view.label}
-                  </option>
-                ))}
-              </select>
+              <div className="space-y-2">
+                {!useManualView ? (
+                  <select
+                    id="view"
+                    name="view"
+                    value={selectedView}
+                    onChange={(e) => setSelectedView(e.target.value)}
+                    className="mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm bg-white text-gray-900"
+                  >
+                    {views.map((view) => (
+                      <option key={view.value} value={view.value} className="text-gray-900">
+                        {view.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    id="manualView"
+                    name="manualView"
+                    value={manualView}
+                    onChange={(e) => setManualView(e.target.value)}
+                    placeholder="Enter view name (e.g., fact_table_name)"
+                    className="mt-1 block w-full pl-3 pr-3 py-2.5 text-base border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm bg-white text-gray-900"
+                  />
+                )}
+                <div className="flex items-center">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      id="useManualView"
+                      name="useManualView"
+                      checked={useManualView}
+                      onChange={(e) => setUseManualView(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                    <span className="ml-2 text-sm text-gray-900 whitespace-nowrap">Enter view manually</span>
+                  </label>
+                </div>
+              </div>
             </div>
 
             {/* Date Range Selection */}
